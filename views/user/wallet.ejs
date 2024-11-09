@@ -1,0 +1,209 @@
+<%- include('./header.ejs') %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+  .text-red {
+    color: red;
+  }
+
+  .text-green {
+    color: green;
+  }
+</style>
+<script>
+  var successMessage = "<%= success %>";
+  var errorMessage = "<%= error %>";
+  if (successMessage) {
+    Swal.fire({
+      toast: true,
+      icon: "success",
+      title: successMessage,
+      position: "top",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+  }
+  if (errorMessage) {
+    Swal.fire({
+      toast: true,
+      icon: "warning",
+      title: errorMessage,
+      position: "top",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+  }
+
+  function confirmLogout() {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to log out !",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/logout";
+      }
+    });
+  }
+</script>
+
+<main class="main">
+  <div class="page-header breadcrumb-wrap">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/" rel="nofollow">Home</a>
+        <span></span> Wallet
+      </div>
+    </div>
+  </div>
+
+  <section class="pt-15 pb-15">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 m-auto">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="dashboard-menu">
+                <ul class="nav flex-column" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link" href="/accountDetails"
+                      ><i class="fi-rs-user mr-10"></i>Account Details</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/orders"
+                      ><i class="fi-rs-shopping-bag mr-10"></i>Orders</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/address"
+                      ><i class="fi-rs-marker mr-10"></i>My Address</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active" href="/wallet"
+                      ><i class="fas fa-wallet mr-10"></i>Wallet</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" onclick="confirmLogout()"
+                      ><i class="fi-rs-sign-out mr-10"></i>Logout</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="col-md-8">
+              <div class="dashboard-content card shadow-sm p-4">
+                <div class="wallet-details">
+                  <h3 class="text-primary mb-3">My Wallet</h3>
+                  <div
+                    class="balance-box bg-light p-3 mb-4 text-center rounded"
+                  >
+                    <h4 class="text-muted">Wallet Balance</h4>
+                    <h2 class="text-success">
+                      ₹<%= wallet.balance.toFixed(2) %>
+                    </h2>
+                  </div>
+                  <div class="text-center mb-4">
+                    <a
+                      href="/wallet/addMoney"
+                      class="btn btn-success btn-lg shadow-sm"
+                      >Add Money</a
+                    >
+                  </div>
+                  <h4 class="mb-3">Transaction History</h4>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Transaction Mode</th>
+                        <th class="text-right">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%transaction.forEach(function(transaction) { %>
+                      <tr>
+                        <td>
+                          <%= new Date(transaction.date).toLocaleDateString() %>
+                        </td>
+                        <td><%= transaction.transactionMode %></td>
+                        <td
+                          class="text-right <%= transaction.amount < 0 ? 'text-red' : 'text-green' %>"
+                        >
+                          <%= transaction.amount < 0 ? '-' : '' %>₹<%=
+                          Math.abs(transaction.amount) %>
+                        </td>
+                      </tr>
+                      <% }); %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Pagination Controls -->
+              <div
+                class="pagination-area mt-15 mb-sm-5 mb-lg-0"
+                style="margin-left: 40%"
+              >
+                <nav aria-label="Transaction page navigation">
+                  <ul class="pagination justify-content-start">
+                    <% if (currentPage > 1) { %>
+                    <li class="page-item">
+                      <a
+                        class="page-link"
+                        href="/wallet?page=<%= currentPage - 1 %>"
+                      >
+                        <i class="fi-rs-angle-double-small-left"></i>
+                      </a>
+                    </li>
+                    <% } %> <% for (let i = 1; i <= totalPages; i++) { %> <% if
+                    (i === 1 || i === totalPages || (i >= currentPage - 2 && i
+                    <= currentPage + 2)) { %>
+                    <li
+                      class="page-item <%= currentPage === i ? 'active' : '' %>"
+                    >
+                      <a class="page-link" href="/wallet?page=<%= i %>">
+                        <%= i %>
+                      </a>
+                    </li>
+                    <% } else if (i === currentPage - 3 || i === currentPage +
+                    3) { %>
+                    <li class="page-item">
+                      <span class="page-link dot">...</span>
+                    </li>
+                    <% } %> <% } %> <% if (currentPage < totalPages) { %>
+                    <li class="page-item">
+                      <a
+                        class="page-link"
+                        href="/wallet?page=<%= currentPage + 1 %>"
+                      >
+                        <i class="fi-rs-angle-double-small-right"></i>
+                      </a>
+                    </li>
+                    <% } %>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<%- include('./footer.ejs') %>

@@ -1,0 +1,342 @@
+<%- include('./header.ejs') %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- style for the count add and decrement -->
+<style>
+  .quantity-input {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 60px;
+    justify-content: space-between;
+    padding: 5px;
+  }
+
+  .quantity-input a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    color: #333;
+    text-decoration: none;
+  }
+
+  .qty-val {
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .qty-up i,
+  .qty-down i {
+    font-size: 12px;
+    color: #333;
+  }
+
+  .qty-up i:hover,
+  .qty-down i:hover {
+    color: #000;
+  }
+</style>
+
+<script>
+  var successMessage = "<%= success %>";
+  var errorMessage = "<%= error %>";
+
+  if (successMessage) {
+    Swal.fire({
+      toast: true,
+      icon: "success",
+      title: successMessage,
+      position: "top",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+  }
+  if (errorMessage) {
+    Swal.fire({
+      toast: true,
+      icon: "warning",
+      title: errorMessage,
+      position: "top",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+  }
+
+  function confirmDelete(productId) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `/removeFromCart/${productId}`;
+      }
+    });
+  }
+</script>
+
+<main class="main">
+  <div class="page-header breadcrumb-wrap">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="/" rel="nofollow">Home</a>
+        <a href="/shop"> <span></span> Shop</a>
+
+        <span></span> Your Cart
+      </div>
+    </div>
+  </div>
+  <section class="mt-1 mb-50">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-12 mb-4">
+          <div class="table-responsive">
+            <table class="table shopping-summery text-center clean">
+              <% if(cart.length==0) { %>
+              <br /><br /><br /><br /><br /><br /><br />
+              <H1>Cart is empty <a href="/shop">continue shoppin</a></H1>
+              <br /><br /><br /><br /><br /><br /><br />
+              <% }else{ %>
+              <thead>
+                <tr class="main-heading">
+                  <th scope="col">Image</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">size</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">offerprice</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Subtotal</th>
+                  <th scope="col">Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% cart.forEach(cart =>{ %>
+
+                <tr>
+                  <td class="image product-thumbnail">
+                    <img src="<%= cart.product.image[0] %>" alt="#" />
+                  </td>
+                  <td class="product-des product-name">
+                    <h6 class="product-name">
+                      <a
+                        href="/product/<%= cart.product._id %>"
+                        style="text-decoration: none"
+                        ><%= cart.product.name %></a
+                      >
+                    </h6>
+                    <p class="font-xs"></p>
+                    <p class="font-xs" style="color: green">
+                      Stock left: <% if(cart.size == "S") { %> <%=
+                      cart.product.stockS %> <% } else if(cart.size == "M") { %>
+                      <%= cart.product.stockM %> <% } else if(cart.size == "L")
+                      { %> <%= cart.product.stockL %> <% } else if(cart.size ==
+                      "XL") { %> <%= cart.product.stockXL %> <% } else
+                      if(cart.size == "XXL") { %> <%= cart.product.stockXXL %>
+                      <% } %>
+                    </p>
+                  </td>
+                  <td class="price" data-title="Price">
+                    <span><%= cart.size %></span>
+                  </td>
+
+                  <td class="price" data-title="Price">
+                    <span>₹<%= cart.product.mrp %></span>
+                  </td>
+           
+                  <td class="price" data-title="Price">
+                    <span>₹<%= cart.bestOfferPrice %></span>
+                  </td>
+                 
+                  <td class="text-center" data-title="Stock">
+                    <div class="quantity-input">
+                      <a
+                        class="qty-up"
+                        onclick="updateCount(1,'<%= cart.product._id%>','<%= cart.size%>')"
+                      >
+                        <i class="fi-rs-angle-small-up"></i>
+                      </a>
+                      <span class="qty-val" id="count-<%= cart.product._id  %>-<%= cart.size%>"
+                        ><%= cart.count %></span
+                      >
+                      <a
+                        class="qty-down"
+                        onclick="updateCount(-1,'<%= cart.product._id%>','<%= cart.size%>')"
+                      >
+                        <i class="fi-rs-angle-small-down"></i>
+                      </a>
+                    </div>
+                  </td>
+
+                  <td
+                    class="text-right"
+                    data-title="Cart"
+                    id="subTotal-<%= cart.product._id %>-<%= cart.size%>"
+                  >
+                    <span
+                      >₹<%= 
+                     cart.bestOfferPrice * cart.count %></span
+                    >
+                  </td>
+                  <td class="action" data-title="Remove">
+                    <a
+                      onclick="confirmDelete('<%= cart.product._id %>') "
+                      class="text-muted"
+                      ><i class="fi-rs-trash"></i
+                    ></a>
+                  </td>
+                </tr>
+
+                <%}) %>
+              </tbody>
+            </table>
+          </div>
+          <!-- <div class="cart-action text-end">
+                     
+                        <a class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                    </div> -->
+          <!-- <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div> -->
+          <div class="row mb-50">
+            <!-- <div class="col-lg-6 col-md-12">
+                           
+                            <div class="mb-30 mt-50">
+                                <div class="heading_s1 mb-3">
+                                    <h4>Apply Coupon</h4>
+                                </div>
+                                <div class="total-amount">
+                                    <div class="left">
+                                        <div class="coupon">
+                                            <form action="#" target="_self">
+                                                <div class="form-row row justify-content-center">
+                                                    <div class="form-group col-lg-6">
+                                                        <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <button class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div> -->
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-12">
+          <div class="border p-md-4 p-30 border-radius cart-totals">
+            <div class="heading_s1 mb-3">
+              <h4>Cart Overview</h4>
+            </div>
+            <div class="table-responsive">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td class="cart_total_label">Base Price</td>
+                    <td class="cart_total_amount">
+                      <span class="font-lg fw-900 text-brand" id="totalPrice"
+                        >₹<%= totalPrice %></span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="cart_total_label">Savings</td>
+                    <td class="cart_total_amount">
+                      <i class="ti-gift mr-5"></i>
+                      <h5 style="color: brown" id="discount">
+                        ₹-<%= discount %>
+                      </h5>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="cart_total_label">Payable Amount</td>
+                    <td class="cart_total_amount">
+                      <strong
+                        ><span
+                          class="font-xl fw-900 text-brand"
+                          id="totalOfferPrice"
+                          >₹<%=totalOfferPrice %></span>
+                        </strong >
+                     
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+           
+              <form action="/checkOut" method="GET">
+  <button type="submit" class="btn">
+    <i class="fi-rs-box-alt mr-10"></i> Proceed To Checkout
+  </button>
+</form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<% } %>
+
+<script>
+  function updateCount(count, productId,size) {
+    
+    fetch(`/cart/${count}/${productId}/${size}`, {
+      method: "get",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          Swal.fire({
+            toast: true,
+            icon: "warning",
+            title: data.error,
+            position: "top",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener("mouseenter", Swal.stopTimer);
+              toast.addEventListener("mouseleave", Swal.resumeTimer);
+            },
+          });
+        } else {
+          document.getElementById(`count-${productId}-${size}`).innerText = data.count;
+          document.getElementById(`subTotal-${productId}-${size}`).innerText =
+            "₹" + data.count * data.offerPrice;
+
+          document.getElementById(`totalPrice`).innerText =
+            "₹" + data.totalPrice;
+          document.getElementById(`totalOfferPrice`).innerText =
+            "₹" + data.totalOfferPrice;
+
+          document.getElementById("discount").innerText =
+            "₹-" + (data.totalPrice - data.totalOfferPrice);
+        }
+      })
+      .catch((error) => alert("Error: " + error.message));
+  }
+</script>
+
+<%- include('./footer.ejs') %>

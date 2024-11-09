@@ -1,0 +1,217 @@
+
+<%- include('./header.ejs') %>
+<%- include('./sidePannel.ejs') %>   
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+
+    
+function confirm(orderId,status) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, confirm it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `/admin/order/${orderId}/${status}`;
+      }
+    });
+  }
+</script>
+<main class="main-wrap">
+
+
+        
+  
+   
+    <section class="pt-15 pb-15">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 m-auto">
+                    <div class="row">
+                       
+                          <div class="col-md-12">
+                            <div class="tab-content dashboard-content">
+                              <div id="order-summary" role="tabpanel" aria-labelledby="order-summary-tab">
+                                <div class="row">
+                                
+                       
+                                  <!-- Loop through all orders -->
+                                  <% orders.forEach(order => { %>
+                                  <div class="col-lg-12">
+                                    <div class="card mb-3 mb-lg-0">
+                                      <div class="card-header"  style="display: flex; justify-content: space-between; align-items: center;">
+                                        <h5 >Order ID: <%= order.orderId %></h5><br>
+                                        <h6>Order Date: <%= new Date(order.orderDate).toLocaleDateString() %></h6>
+                                        <% if (order.orderStatus=='cancelled') {%>
+                                            <p style="color: red;"><b><%= order.orderStatus %></b></p>
+                                     <%   }else{%>
+                                        <p style="color: rgb(57, 10, 96);"><b><%= order.orderStatus %></b></p>
+                                        <%   }%>
+                                        
+                                      </div>
+                                      <div class="card-body">
+                                       
+                                        <!-- Shipping Address -->
+                                       
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h6>Name:<%= order.userName %><p>email: <%= order.email %></p></h6>
+                                              <address>
+                                                <h6>Shipping Address</h6>
+                                                <b>Address Type: <%= order.shippingAddress.addressType %></b> <br>
+                                                <%= order.shippingAddress.houseName %>, <%= order.shippingAddress.street %> <br>
+                                                <%= order.shippingAddress.city %>, <%= order.shippingAddress.district %>, <%= order.shippingAddress.state %> <br>
+                                                Zip: <%= order.shippingAddress.zip %> <br>
+                                                Phone: <%= order.shippingAddress.mobile %> <br>
+                                              </address>
+                                            </div>
+                                          
+                                            <!-- Dropdown and Button -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <% if(order.orderStatus=='cancelled'){%>
+                                                 <h6 style="color: red;"> Cancelled</h6>
+                                                    <% } else if(order.orderStatus=='delivered'){%>
+                                                        <h6 style="color: rgb(32, 11, 114);"> Delivery completed</h6>
+                                                        <% }else if(order.orderStatus=='Return success'){ %>
+                                                        <h6 style="color: rgb(32, 11, 114);">    successfully returned</h6>
+                                                           
+                                                        <% }else{ %>
+                                              <select id="addressAction-<%= order._id %>"  value="<%= order.orderStatus %>" class="form-select me-2">
+                                                <% if( order.orderStatus=='Return request applied' || order.orderStatus=='Return request accepted' ){ %>
+                                                  <option value="Return request accepted">Return request accepted</option>  
+                                                  <option value="Return success" >Return success</option> 
+                                                  <% }else{ %>
+                                                <option value="pending">Pending</option>
+                                                <option value="processing">Processing</option>
+                                                <option value="shipped">Shipped</option>
+                                                <option value="delivered">delivered</option>
+                                                <option value="cancelled" >Cancel</option>     
+                                            
+                                                   <% } %>
+                                                <!-- Add more options as needed -->
+                                              </select>
+                                              <button class="btn btn-primary" onclick="changeStatus('<%= order._id%>')">Update</button>
+                                            </div>
+                                            <!-- the script for changing order status -->
+                                           
+                                                <% } %>
+                                          </div>
+                      
+                                        <!-- Payment Method -->
+                                        <p><strong>Payment Method:</strong> <b><%= order.paymentMethod %></p></b>
+                                        <% if(order.paymentStatus=='failed'){ %>
+                                        <p style="color: red;"><strong>Payment Status:</strong> <b><%= order.paymentStatus %></p></b>
+                                          <%} else if(order.paymentStatus=='completed'){ %>
+                                            <p style="color: rgb(5, 114, 3);"><strong>Payment Status:</strong> <b><%= order.paymentStatus %></p></b>
+                                            <% }else{ %>
+                                              <p><strong>Payment Status:</strong> <b><%= order.paymentStatus %></p></b>
+
+                                              <% } %>
+                                        <!-- Products List -->
+                                        <h6>Products</h6>
+                                        <table class="table table-bordered">
+                                          <thead>
+                                            <tr>
+                                                <th>image</th>
+                                              <th>Product Name</th>
+                                              <th>Product size</th>
+
+                                              <th>Quantity</th>
+                                              <th>MRP</th>
+                                              <th>Offer Price</th>
+                                              <th>Total</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <% order.products.forEach(product => { %>
+                                            <tr>
+                                                <td><img src="<%=  product. productId.image[0]  %>" alt="product image"  style="width: 30px; height: auto;"></td>
+                                              <td><b><strong><%= product.name %></strong>   </b></td>
+                                              <td><%= product.size %></td>
+
+                                              <td><%= product.quantity %></td>
+                                              <td>₹ <%= product.mrp %></td>
+                                              <td>₹ <%= product.offerPrice %></td>
+                                              <td>₹ <%= product.total %></td>
+                                            </tr>
+                                            <% }) %>
+                                          </tbody>
+                                        </table>
+                          
+                                        <!-- Order Total -->
+                                         <div  style="display: flex; justify-content: space-between; align-items: center;">
+                                          <% if(order.appliedCoupon!=null){ %>
+                                            <span class="grand-total">coupon applied: <%= order.appliedCoupon %></span>
+                                            <span class="grand-total">coupon discount:₹ <%= order.couponDiscount %></span>
+                                         <% } %>  
+                                          <p></p>
+                                            <h5><strong>Grand Total: </strong>₹ <%= order.orderTotal %></h5> 
+                                           
+                                         </div>
+                                        
+                          
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <script>
+                                      document.getElementById('addressAction-<%= order._id %>').value = "<%= order.orderStatus %>";
+                                  </script>
+                                  <% }) %>
+                          
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          
+                          
+
+
+
+
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        
+        function changeStatus(orderId){
+          const status=document.getElementById(`addressAction-${orderId}`).value
+          if (status=='cancelled' || status=='delivered') {
+            confirm(orderId,status);
+          }else{
+            window.location.href=`/admin/order/${orderId}/${status}`
+
+          }
+        }
+      </script>
+
+</main>
+ <script src="/admin/js/vendors/jquery-3.6.0.min.js"></script>
+ <script src="/admin/js/vendors/bootstrap.bundle.min.js"></script>
+ <script src="/admin/js/vendors/select2.min.js"></script>
+ <script src="/admin/js/vendors/perfect-scrollbar.js"></script>
+ <script src="/admin/js/vendors/jquery.fullscreen.min.js"></script>
+ <script src="/admin/js/vendors/chart.js"></script>
+ <!-- Main Script -->
+ <script src="/admin/js/main.js" type="text/javascript"></script>
+ <script src="/admin/js/custom-chart.js" type="text/javascript"></script>
+
+ <script>
+
+
+
+ </script>
+
+</body>
+
+</html>

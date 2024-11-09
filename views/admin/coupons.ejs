@@ -1,0 +1,237 @@
+
+<%- include('./header.ejs') %>
+<%- include('./sidePannel.ejs') %>   
+<main class="main-wrap">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+   
+    var successMessage = '<%= successMsg %>';
+  var errorMessage='<%= errorMsg %>'
+
+    if (successMessage) {
+      Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: successMessage,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+    }
+    if (errorMessage) {
+      Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: errorMessage,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+    }
+
+    
+    function confirmDelete(Id) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/admin/coupon/deleteCoupon/'+Id;
+      }
+    });
+  }
+</script>
+<div class="col-lg-9">
+    <section class="content-body p-xl-4">
+        <form   onsubmit="return validateForm()"  action="/admin/coupon/addCoupon" id="coupon" method="post">
+            <!-- First row: Coupon Code, Discount, and Minimum Order -->
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label">Coupon Code</label>
+                    <input type="text" class="form-control" placeholder="Enter code" name="code" id="code" required>
+                    <small id="codeError" class="text-danger"></small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Discount (%)</label>
+                    <input type="number" class="form-control" placeholder="Discount %" name="discount" id="discount" min="0" max="100" required>
+                    <small id="discountError" class="text-danger"></small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Minimum Order Value</label>
+                    <input type="number" class="form-control" placeholder="Min order" name="minOrder" id="minOrder" min="0" required>
+                    <small id="minOrderError" class="text-danger"></small>
+                </div>
+            </div>
+        
+            <!-- Second row: Maximum Discount, Expiry Date, and Limit Per User -->
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label">Max Discount Amount</label>
+                    <input type="number" class="form-control" placeholder="Max discount" name="maxDiscount" id="maxDiscount" min="0" required>
+                    <small id="maxDiscountError" class="text-danger"></small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Expiry Date</label>
+                    <input type="date" class="form-control" name="expiryDate" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Limit Per User</label>
+                    <input type="number" class="form-control" placeholder="Limit per user" name="limitPerUser" id="limitPerUser" min="1" required>
+                    <small id="limitPerUserError" class="text-danger"></small>
+                </div>
+            </div>
+        
+            <!-- Third row: Button -->
+            <div class="row mb-2 align-items-end">
+                <div class="col-md-3 text-end">
+                    <button class="btn btn-primary" type="submit">Add Coupon</button>
+                </div>
+            </div>
+        </form>
+
+    </section> 
+</div> 
+
+<div class="card mb-4">
+        
+  
+   
+    <div class="card-body">
+        <div class="table-responsive">
+           
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Code</th>
+                        <th scope="col">values</th>
+                        <th scope="col">Expiry Date</th>
+                        <th scope="col">Actiions</th>
+
+                       
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <% coupons.forEach(coupon => { %>
+                    <tr> 
+                        <td>
+                        <p style="font-size: large;">Code: <%= coupon.code %> </p>  
+                         
+                        </td>     
+                        <td>
+                            <p style="font-size: large;">Discount:- <%= coupon.discount %>% </p>  
+                                <small>Minimum order amount:- <%= coupon.minOrder %> ₹</small><br>
+                                <small>Maximon discount amount:- <%= coupon.maxDiscount %> ₹</small><br>
+                                <small>Limit per user:-<%= coupon.limitPerUser %> </small>
+
+                            </td>                        
+                                             
+                      
+                        <td>
+                              <p><%= new Date(coupon.expiryDate).toLocaleString() %></p>
+
+                        </td>
+
+                        <td>
+                            <button class="btn btn-md rounded font-sm" onclick="window.location.href='/admin/coupon/editCoupon/<%= coupon._id %>'">
+                               Edit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                              </button><br><br>
+                                <button class="btn btn-md rounded font-sm" style="background-color: #e74c3c;" onclick="confirmDelete('<%= coupon._id %>')">
+                                  delete
+                                </button><br><br>
+                        </td>
+
+                    </tr>
+
+                        <% }); %>
+                   
+                </tbody>
+            </table>
+         <!-- table-responsive //end -->
+        </div>
+    <!-- card-body end// -->
+    </div>
+</div> 
+
+</main>
+ <script src="/admin/js/vendors/jquery-3.6.0.min.js"></script>
+ <script src="/admin/js/vendors/bootstrap.bundle.min.js"></script>
+ <script src="/admin/js/vendors/select2.min.js"></script>
+ <script src="/admin/js/vendors/perfect-scrollbar.js"></script>
+ <script src="/admin/js/vendors/jquery.fullscreen.min.js"></script>
+ <script src="/admin/js/vendors/chart.js"></script>
+ <!-- Main Script -->
+ <script src="/admin/js/main.js" type="text/javascript"></script>
+ <script src="/admin/js/custom-chart.js" type="text/javascript"></script>
+
+ <script>
+    function validateForm() {
+        // Clear previous error messages
+        document.getElementById('codeError').innerText = '';
+        document.getElementById('discountError').innerText = '';
+        document.getElementById('minOrderError').innerText = '';
+        document.getElementById('maxDiscountError').innerText = '';
+        document.getElementById('limitPerUserError').innerText = '';
+
+        // Get values from the form
+        const code = document.getElementById('code').value;
+        const discount = document.getElementById('discount').value;
+        const minOrder = document.getElementById('minOrder').value;
+        const maxDiscount = document.getElementById('maxDiscount').value;
+        const limitPerUser = document.getElementById('limitPerUser').value;
+
+        // Validate Coupon Code
+        if (code.length < 5) {
+            document.getElementById('codeError').innerText = 'Coupon code must contain at least 5 characters.';
+            return false; // Prevent form submission
+        }
+
+        // Validate Discount
+        if (discount < 0 || discount > 100) {
+            document.getElementById('discountError').innerText = 'Discount must be between 0 and 100.';
+            return false; // Prevent form submission
+        }
+
+        // Validate Minimum Order Value
+        if (minOrder < 0) {
+            document.getElementById('minOrderError').innerText = 'Minimum order value cannot be negative.';
+            return false; // Prevent form submission
+        }
+
+        // Validate Max Discount Amount
+        if (maxDiscount < 0) {
+            document.getElementById('maxDiscountError').innerText = 'Max discount amount cannot be negative.';
+            return false; // Prevent form submission
+        }
+
+        // Validate Limit Per User
+        if (limitPerUser < 1) {
+            document.getElementById('limitPerUserError').innerText = 'Limit per user must be at least 1.';
+            return false; // Prevent form submission
+        }
+
+        return true; // Allow form submission
+    }
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,545 @@
+<%- include('./header.ejs') %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- style for the count add and decrement -->
+<style>
+    .quantity-input {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 60px;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.quantity-input a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    color: #333;
+    text-decoration: none;
+}
+
+.qty-val {
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.qty-up i,
+.qty-down i {
+    font-size: 12px;
+    color: #333;
+}
+
+.qty-up i:hover,
+.qty-down i:hover {
+    color: #000;
+}
+
+.radio-container {
+    display: flex;
+    align-items: center; /* Align radio button and label text in a line */
+    margin-right: 10px; /* Space between each payment method option */
+}
+
+.small-radio {
+    width: auto; /* Default radio button size */
+    height: auto; /* Default radio button size */
+    margin-right: 8px; /* Space between radio button and label */
+}
+
+.payment-method-container {
+    display: flex;
+    flex-direction: row;
+    gap: 15px; 
+    justify-content: flex-start; 
+}
+
+.radio-label {
+    display: flex;
+    align-items: center; 
+    cursor: pointer; 
+    font-size: 14px; 
+}
+
+.radio-label h5 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+</style>
+<script>
+   
+    var successMessage = '<%= success %>';
+  var errorMessage='<%= error %>'
+
+    if (successMessage) {
+      Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: successMessage,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+    }
+    if (errorMessage) {
+      Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: errorMessage,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+    }
+
+
+    
+    function confirmDelete(addressId) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/checkOutDeleteAddress/' + addressId;
+      }
+    });
+  }
+
+</script>
+
+
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+               <a href="/shop"> <span></span> Shop</a>
+               <a href="/cart"> <span></span> Your Cart</a>
+                <span></span> CheckOut
+            </div>
+        </div>
+    </div>
+    <% if(cart.length==0){ %>
+      <br><br><br><br><br><br><br><br><br>
+      <h1>No products available <a href="/shop"> continue shopping</a></h1><br><br><br><br><br><br><br>
+      <% }else{ %>
+    <h2 style="text-align: center;">Buy now </h2>
+    <section class="mt-1 mb-50">
+        <div class="container">
+            <div class="row">
+                <!-- Product Table on the Left -->
+                <div class="col-lg-8 col-md-12 mb-4">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center clean">
+                            <thead>
+                                <tr class="main-heading">
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">size</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Offer Price</th>
+                                    <th scope="col">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cart.forEach(cart => { %>
+                                <tr>
+                                    <td class="image product-thumbnail"><img src="<%= cart.product.image[0] %>" alt="#"></td>
+                                    <td class="product-des product-name">
+                                        <h5 class="product-name">
+                                            <a href="/product/<%= cart.product._id %>" style="text-decoration: none;"><%= cart.product.name %></a>
+                                        </h5>
+                                        <p class="font-xs"></p><!-- description here and awailability below -->
+                                        <p class="font-xs" style="color: green;"></p>
+                                    </td>
+                                    <td class="price" data-title="Price"><span><%= cart.size %></span></td>
+
+                                    <td class="price" data-title="Price"><span>₹<%= cart.product.mrp %></span></td>
+                                   
+
+                                    <td class="price" data-title="Price"><span>₹<%= cart.bestOfferPrice %></span></td>
+                                    
+                                      <!-- calculation of sub total  -->
+                                    <td class="text-right" data-title="Cart" id="subTotal-<%= cart.product._id %>">   
+                                        <span>₹<%= cart.bestOfferPrice * cart.count %></span>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                   <div>
+                    <div class="col-md-12">
+                        <div class="tab-content dashboard-content">
+                          <div id="address" role="tabpanel" aria-labelledby="address-tab">
+                            <div class="row">
+                              <% if (addresses.length > 0) { %>
+                                <% addresses.forEach((address)=> { %>
+                                   
+                                  <!-- Display each address in a separate card -->
+                                  <div class="col-lg-4">
+                                    
+                                    <div class="card mb-3 mb-lg-0">
+                                        
+                                        
+                                      <div class="card-header" >
+                                        <div class="radio-container">
+                                            <input type="radio" id="address-<%= address._id %>" name="options" value="<%= address._id %>" class="small-radio" >
+                                            <h5 class="mb-0"> <%= address.addressType %></h5>
+                                        </div>
+                                        
+                                      </div>
+                                      <div class="card-body">
+                                        <address>
+                                          <%= address.houseName %> <br>
+                                          <%= address.street %> <br>
+                                       
+                                          <%= address.city %>, <%= address.state %>,<%= address.district %> <br> <%= address.zip %> <br>Phone: <%= address.mobile %>
+                                        </address>
+                                        <p></p>
+                                        <p> </p>
+                                        <a href="/checkOutEditAddress/<%= address._id %>" class="btn-small" >Edit</a>
+                                        <a class="btn-small" style="margin-left: 55%; color: red;" onclick="confirmDelete('<%= address._id %>')">Delete</a>
+                                      </div>
+                                  
+                                    </div>
+                                  </div>
+                                <% }) %>
+                              <% } else { %>
+                                <p>No addresses available. Please add a new address.</p>
+                              <% } %>
+                             
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button type="submit" class="button " onclick="window.open('/checkOutAddAddress','_self') "  style="float: center; margin-top: 3%;margin-bottom: 10%; margin-left: 1%;"  >Add Address</button>
+
+                   </div>
+                </div>
+    
+                <!-- Order Summary on the Right -->
+                <div class="col-lg-4 col-md-12 mb-4">
+                    <div class="border p-md-4 p-30 border-radius cart-totals">
+                        <div class="heading_s1 mb-3">
+                            <h4>Order Summary</h4>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td class="cart_total_label">Base price</td>
+                                        <td class="cart_total_amount">
+                                            <span class="font-lg fw-900 text-brand" id="totalPrice">₹<%= totalPrice %></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="cart_total_label">Savings</td>
+                                        <td class="cart_total_amount">
+                                            <i class="ti-gift mr-5"></i>
+                                            <h5 style="color: brown;" id="discount">₹<%= discount %></h5>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="cart_total_label">delivery charge</td>
+                                      <td class="cart_total_amount">
+                                          <strong><span class="font-xl fw-900 text-brand" id="">₹<%= delivery %></span></strong>
+                                      </td>
+                                  </tr>
+                                    <tr>
+                                        <td class="cart_total_label">Payable Amount</td>
+                                        <td class="cart_total_amount">
+                                            <strong><span class="font-xl fw-900 text-brand" id="totalOfferPrice">₹<%= totalOfferPrice %></span></strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <form id="couponForm" onsubmit="applyCoupon(event)" style="display: flex; align-items: center;">
+                          <div class="form-group" style="margin-right: 10px;">
+                              <label for="couponCode">Coupon Code</label>
+                              <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Enter coupon code" required>
+                          </div>
+                       <input type="hidden"  id="couponPass"  value='null'>
+                       <input type="hidden" name="orderValue" value="<%= totalOfferPrice %>">
+                       <input type="hidden" name="exixtingDiscount" value="<%= discount %>">
+                          <button type="submit" id="applyCouponBtn"   class="button" style="height: 30px; padding: 0 15px; font-size: 12px; white-space: nowrap; display: inline-block; text-align: center; margin-top: 15px;">
+                              Apply Coupon
+                          </button>
+                        
+                          <button type="button" id="removeCouponBtn" class="button" style="height: 30px; padding: 0 15px; font-size: 12px; white-space: nowrap; display: inline-block; text-align: center; margin-top: 15px; display: none;" onclick="removeCoupon()">
+                            Remove Coupon
+                        </button>
+
+                      </form>
+                      
+                      <h6 style="margin-top: 10%;">Select Payment Method</h6>
+                      <p style="color: red;" id="noCod"></p>
+                      <div class="payment-method-container" style="margin-top: 0%;">
+                          <!-- Cash on Delivery option -->
+                          <label class="radio-label">
+                              <input type="radio" id="COD" name="paymentMethod" value="COD" class="small-radio" >
+                              <div class="radio-checkmark"></div>
+                              <h5 class="mb-0" id="codLabel">Cash on Delivery</h5>
+                          </label>
+                      
+                          <!-- PayPal option -->
+                          <label class="radio-label">
+                              <input type="radio" id="paypal" name="paymentMethod" value="paypal" class="small-radio" checked>
+                              <div class="radio-checkmark"></div>
+                              <h5 class="mb-0">PayPal</h5>
+                          </label>
+                          <label class="radio-label">
+                            <input type="radio" id="wallet" name="paymentMethod" value="WALLET" class="small-radio">
+                            <div class="radio-checkmark"></div>
+                            <h5 class="mb-0">Wallet(₹<%= wallet.balance %>)</h5> 
+                        </label>
+                      </div>
+                   <br>
+                        <button type="submit" class="button " onclick=" placeOrder()"  style="float: center; margin-top: 0%;margin-bottom: 0%; margin-left: 15%;"  >Place Order</button>
+                    </div>
+      
+
+                </div>
+                </div>
+               
+            </div>
+        </div>
+    </section>
+ 
+</main>
+
+<script>
+const totalAmount = parseInt(document.getElementById('totalOfferPrice').textContent.replace('₹', '').trim());  
+   if (totalAmount>1000) {
+     document.getElementById('COD').disabled = true;
+     document.getElementById('COD').style.display = 'none';
+
+     document.getElementById('codLabel').textContent = ''; 
+     document.getElementById('noCod').textContent='COD unavailable for orders above ₹1000'
+     document.getElementById('paypal').checked=true
+   }
+ 
+
+    function placeOrder(){
+        var selectedAddress = document.querySelector('input[name="options"]:checked');
+        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+
+        if (!selectedAddress) {
+            Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title:'please select an address to proceed',
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+        }
+        else {
+           const addressId = selectedAddress.value;
+           const payment=selectedPaymentMethod.value;
+         const coupon=document.getElementById('couponPass').value
+
+window.open('/placeOrder/' + addressId+'/'+coupon+'/'+payment ,'_self');
+        }
+    }
+
+    // script for apply couypons 
+
+    
+    function applyCoupon(event){
+      event.preventDefault()
+
+const couponCode = document.getElementById('couponCode').value;
+const orderValue = '<%= totalOfferPrice %>'
+const existingDiscount ='<%= discount%>'
+
+console.log("Coupon Code:", couponCode);
+console.log("Order Value:", orderValue);
+console.log("Existing Discount:", existingDiscount);
+
+      fetch('/applyCoupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({couponCode,orderValue,existingDiscount })  // Send the form data as json data
+    })
+ .then(response=>response.json())
+    .then(data=>{
+        if (data.success) {
+
+          Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: data.message,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+          
+      document.getElementById('couponPass').value=data.couponCode;
+
+      document.getElementById('discount').innerText='₹-'+data.newTotalDiscount;
+      document.getElementById('totalOfferPrice').innerText='₹'+data.finalPayableAmount;
+
+      //change button 
+      document.getElementById('applyCouponBtn').style.display = 'none';
+            document.getElementById('removeCouponBtn').style.display = 'inline-block';
+        } else {
+
+          Swal.fire({
+        toast: true,
+        icon: 'warning',
+        title: data.message,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+        }
+
+        const totalAmount = parseInt(document.getElementById('totalOfferPrice').textContent.replace('₹', '').trim());   console.log(totalAmount);
+   
+   if (totalAmount>1000) {
+     document.getElementById('COD').disabled = true;
+     document.getElementById('COD').style.display = 'none';
+
+     document.getElementById('codLabel').textContent = ''; 
+     document.getElementById('noCod').textContent='COD unavailable for orders above ₹1000'
+     document.getElementById('paypal').checked=true
+
+   }else{
+
+    document.getElementById('COD').disabled = false;
+     document.getElementById('COD').style.display = 'flex';
+
+     document.getElementById('codLabel').textContent = 'COD'; 
+     document.getElementById('noCod').textContent='';
+   }
+ 
+
+    }).catch(error=>{
+        console.log(error);
+     
+        
+    });
+
+
+    }
+
+    function removeCoupon() {
+ 
+    fetch('/removeCoupon', {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+       
+    })
+ .then(response=>response.json())
+    .then(data=>{
+        if (data.success) {
+
+          Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: 'coupon Removed',
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      });
+           
+
+    
+      document.getElementById('discount').innerText = '₹-' + '<%= discount%>'; 
+      document.getElementById('totalOfferPrice').innerText = '₹' + '<%= totalOfferPrice %>';
+   
+    document.getElementById('removeCouponBtn').style.display = 'none';
+    document.getElementById('applyCouponBtn').style.display = 'inline-block';
+    document.getElementById('couponPass').value='null';
+
+
+        }
+    }).catch(error=>{
+        console.log(error);
+     
+        
+    });
+    if (totalAmount>1000) {
+     document.getElementById('COD').disabled = true;
+     document.getElementById('COD').style.display = 'none';
+
+     document.getElementById('codLabel').textContent = ''; 
+     document.getElementById('noCod').textContent='COD unavailable for orders above ₹1000'
+     document.getElementById('paypal').checked=true
+
+   }else{
+
+    document.getElementById('COD').disabled = false;
+     document.getElementById('COD').style.display = 'flex';
+
+     document.getElementById('codLabel').textContent = 'COD'; 
+     document.getElementById('noCod').textContent=''
+   }
+
+
+      
+
+    }
+
+
+
+ 
+</script>
+
+<% } %>
+<%- include('./footer.ejs') %>

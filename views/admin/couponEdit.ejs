@@ -1,0 +1,123 @@
+<%- include('./header.ejs') %>
+<%- include('./sidePannel.ejs') %>   
+<main class="main-wrap">
+
+<div class="col-lg-9">
+    <section class="content-body p-xl-4">
+        <form onsubmit="return validateEditForm()" action="/admin/coupon/editCoupon/<%= coupon._id %>" id="editCoupon" method="post">
+            <% if (errorMsg) { %>
+                <h4 style="text-align: center; color: #e74c3c;"><%= errorMsg %></h4>
+            <% } %>
+            <% if (successMsg) { %>
+                <h4 style="text-align: center; color: #2ecc71;"><%= successMsg %></h4>
+            <% } %>
+        
+            <!-- First row: Coupon Code, Discount, and Minimum Order -->
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label">Coupon Code</label>
+                    <input type="text" class="form-control" placeholder="Enter code" name="code" value="<%= coupon.code %>" id="editCode" required>
+                    <small id="editCodeError" class="text-danger"></small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Discount (%)</label>
+                    <input type="number" class="form-control" placeholder="Discount %" name="discount" value="<%= coupon.discount %>" id="editDiscount" min="0" max="100" required>
+                    <small id="editDiscountError" class="text-danger"></small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Minimum Order Value</label>
+                    <input type="number" class="form-control" placeholder="Min order" name="minOrder" value="<%= coupon.minOrder %>" id="editMinOrder" min="0" required>
+                    <small id="editMinOrderError" class="text-danger"></small>
+                </div>
+            </div>
+        
+            <!-- Second row: Maximum Discount, Expiry Date, and Limit Per User -->
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label">Max Discount Amount</label>
+                    <input type="number" class="form-control" placeholder="Max discount" value="<%= coupon.maxDiscount %>" name="maxDiscount" id="editMaxDiscount" min="0" required>
+                    <small id="editMaxDiscountError" class="text-danger"></small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Expiry Date</label>
+                    <input type="date" class="form-control" name="expiryDate" value="<%= coupon.expiryDate ? coupon.expiryDate.toISOString().split('T')[0] : '' %>" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Limit Per User</label>
+                    <input type="number" class="form-control" placeholder="Limit per user" value="<%= coupon.limitPerUser %>" name="limitPerUser" id="editLimitPerUser" min="1" required>
+                    <small id="editLimitPerUserError" class="text-danger"></small>
+                </div>
+            </div>
+        
+            <!-- Third row: Submit Button -->
+            <div class="row mb-2 align-items-end">
+                <div class="col-md-3 text-end">
+                    <button class="btn btn-primary" type="submit">UPDATE</button>
+                </div>
+            </div>
+        </form>
+    </section> 
+</div> 
+</main>
+
+<!-- JavaScript for Validation -->
+<script>
+    function validateEditForm() {
+        // Clear previous error messages
+        document.getElementById('editCodeError').innerText = '';
+        document.getElementById('editDiscountError').innerText = '';
+        document.getElementById('editMinOrderError').innerText = '';
+        document.getElementById('editMaxDiscountError').innerText = '';
+        document.getElementById('editLimitPerUserError').innerText = '';
+
+        // Get values from the form
+        const code = document.getElementById('editCode').value;
+        const discount = document.getElementById('editDiscount').value;
+        const minOrder = document.getElementById('editMinOrder').value;
+        const maxDiscount = document.getElementById('editMaxDiscount').value;
+        const limitPerUser = document.getElementById('editLimitPerUser').value;
+
+        // Validate Coupon Code
+        if (code.length < 5) {
+            document.getElementById('editCodeError').innerText = 'Coupon code must contain at least 5 characters.';
+            return false; // Prevent form submission
+        }
+
+        //
+        if (discount < 0 || discount > 100) {
+            document.getElementById('editDiscountError').innerText = 'Discount must be between 0 and 100.';
+            return false; 
+        }
+
+     
+        if (minOrder < 0) {
+            document.getElementById('editMinOrderError').innerText = 'Minimum order value cannot be negative.';
+            return false; 
+        }
+
+        
+        if (maxDiscount < 0) {
+            document.getElementById('editMaxDiscountError').innerText = 'Max discount amount cannot be negative.';
+            return false; 
+        }
+
+      
+        if (limitPerUser < 1) {
+            document.getElementById('editLimitPerUserError').innerText = 'Limit per user must be at least 1.';
+            return false; 
+        }
+
+        return true; 
+    }
+</script>
+
+<script src="/admin/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/admin/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/admin/js/vendors/select2.min.js"></script>
+<script src="/admin/js/vendors/perfect-scrollbar.js"></script>
+<script src="/admin/js/vendors/jquery.fullscreen.min.js"></script>
+<script src="/admin/js/vendors/chart.js"></script>
+<script src="/admin/js/main.js" type="text/javascript"></script>
+<script src="/admin/js/custom-chart.js" type="text/javascript"></script>
+</body>
+</html>

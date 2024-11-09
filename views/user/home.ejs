@@ -1,0 +1,99 @@
+﻿<%- include('./header.ejs') %>
+
+    <main class="main" style="overflow-x: hidden;">  
+      
+            <!-- the banner  -->
+        <section class="home-slider position-relative pt-50" >
+            <div class="hero-slider-1 dot-style-1 dot-style-1-position-1">
+                <div class="single-hero-slider single-animation-wrap">
+                    <div class="container">
+                        <div class="row align-items-center slider-animated-1">
+                            <div class="col-lg-5 col-md-6">
+                                <div class="hero-slider-content-2">
+                                    <h4 class="animated">Trade-in offer</h4>
+                                    <h2 class="animated fw-900">Supper value deals</h2>
+                                    <h1 class="animated fw-900 text-brand">On all products</h1>
+                                    <p class="animated">Save more with coupons & up to 70% off</p>
+                                    <a class="animated btn btn-brush btn-brush-3" href="/shop"> Shop Now </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-7 col-md-6">
+                                <div class="single-slider-img single-slider-img-1">
+                                    <img class="animated slider-1-1" src="/admin/imgs/theme/cover.jpg" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        
+
+            <div class="row product-grid-4">
+
+                <% products.forEach(product => { %>  
+                    <% if (product.is_active==1  && product.category.is_active==1) {%>
+                        
+                  
+                    <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                        <div class="product-cart-wrap mb-30">
+                            <div class="product-img-action-wrap">
+                                <div class="product-img product-img-zoom">
+                                    <a href="/product/<%= product._id %>">
+                                        <img class="default-img" src="<%= product.image[0] %>" alt="">
+                                        <img class="hover-img" src="<%= product.image[1] %>" alt="">
+                                    </a>
+                                    
+                                </div>
+                            </div>
+                            <div class="product-content-wrap">
+                                <div class="product-category">
+                                 <p> <%= product.category.name %></p> 
+                                </div>
+                                <div class="rating-result" title="90%">
+                                    <% if(product.bestDiscount!=0){ %>
+                                    <span>
+                                        <span> <%= product.bestDiscount %>%off</span>
+                                    </span>
+                                </div>
+                                <h2><%= product.name %></h2>
+                                
+                                <div class="product-price">
+                                    <span>₹<%= product.bestOfferPrice %> </span>
+                                
+                                        <span class="old-price">₹<%= product.mrp%></span>
+                                   
+                                </div>
+                                <% }else{ %>
+                                    <span>
+                                     
+                                    </span>
+                                </div>
+                                <h2><%= product.name %></h2>
+                                
+                                <div class="product-price">
+                                    <span>₹<%= product.mrp %> </span>
+                                
+                                      
+                                   
+                                </div>
+                                    <% } %>
+                                <!-- <div class="product-action-1 show">
+                                    <a aria-label="Add To Cart" class="action-btn hover-up" href="/addToCart/<%= product._id %>">
+                                        <i class="fi-rs-shopping-bag-add"></i>
+                                    </a>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <% }  %>
+                <% }); %>
+            </div>
+            
+
+
+
+
+    </main>
+   
+    <%- include('./footer.ejs') %>

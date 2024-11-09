@@ -1,0 +1,238 @@
+<%- include('./header.ejs') %>
+
+<%- include('./sidePannel.ejs') %>  <!-- Side panel -->
+
+<style>
+    /* General Styling */
+    body {
+        background-color: #f9fafb;
+        font-family: 'Arial', sans-serif;
+        color: #333;
+    }
+
+    .content-main {
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin: 20px;
+    }
+
+    .content-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+
+    .content-header h2 {
+        font-size: 28px;
+        font-weight: bold;
+        color: #4a4a4a;
+    }
+
+    .content-header p {
+        color: #666;
+        font-size: 14px;
+    }
+
+    /* Table Styling */
+    .table {
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        background-color: #ffffff;
+    }
+
+    .table thead {
+        background-color: #f1f3f5;
+    }
+
+    .table thead th {
+        font-weight: 600;
+        color: #5a5a5a;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .table tbody tr {
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .table tbody td {
+        text-align: center;
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    /* Summary Section */
+    .summary {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .summary div {
+        background-color: #f1f3f5;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 45%;
+        text-align: center;
+    }
+
+    .summary h6 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #4a4a4a;
+    }
+
+    .summary .value {
+        font-size: 22px;
+        color: #2c7be5; /* Soft blue for total values */
+    }
+
+    .summary .value.discount {
+        color: #e55353; /* Soft red for discounts */
+    }
+  
+    .button {
+        background-color: #007870; /* Button background color (same as the image) */
+        color: white; /* Text color */
+        border: none; /* Remove default border */
+        padding: 5px 7px; /* Padding for the button */
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px; /* Font size */
+        border-radius: 8px; /* Rounded corners */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+        background-color: #005f57; /* Darker shade for hover effect */
+    }
+</style>
+
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9 m-auto">
+                        <h2 class="content-title">Sales Report</h2>
+                        <p>Sales report from <strong><%= startDate %></strong> to <strong><%= endDate %></strong></p>
+                        
+                    </div>
+                    <div  class="col-lg-3 m-auto">
+                        <button type="submit" class="button" onclick="window.open('/admin/dashboard/salesReport/downloadPdf/<%= startDate %>/<%= endDate %>','_self') "    >Download PDF&nbsp;&nbsp;&nbsp;</button><br><br>
+                        <button type="submit" class="button" onclick="window.open('/admin/dashboard/salesReport/downloadExcel/<%= startDate %>/<%= endDate %>','_self') "    >Download EXCEL</button>
+
+
+                    </div>
+               
+                </div>
+
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Total Orders</th>
+                        <th>Total mrp (Rs.)</th>
+
+                        <th>Total Revenue (Rs.)</th>
+                        <th>Coupon Discount (Rs.)</th>
+                        <th>Offer Discount (Rs.)</th>
+                        <th>delivery charges(Rs.)</th>
+
+                        <th>Total Discount (Rs.)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (salesData.length > 0) { %>
+                        <% salesData.forEach((day) => { %>
+                            <tr>
+                                <td><%= day._id %></td>
+                                <td><%= day.orders %></td>
+                                <td><%= day.mrp %></td>
+                                <td>₹ <%= day.revenue %></td>
+                                <td>₹ <%= day.couponDiscount %></td>
+                                <td>₹ <%= day.offerDiscount %></td>
+                                <td>₹ <%= day.orders*40  %></td>
+                                <td>₹ <%= day.discount %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center">No sales data available for this period</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="summary">
+            <div>
+                <h6>Total Orders</h6>
+                <span class="value"><%= totalOrder %></span>
+            </div>
+            <div>
+                <h6>Total MRP</h6>
+                <span class="value">₹ <%= totalMrp.toFixed(2)  %></span>
+            </div>
+        </div>
+
+        <div class="summary mt-4">
+            <div>
+                <h6>Total Coupon Discount</h6>
+                <span class="value discount">₹ <%= totalCouponDiscount.toFixed(2) %></span>
+            </div>
+            <div>
+                <h6>Total Offer Discount</h6>
+                <span class="value discount">₹ <%= totalOfferDiscount.toFixed(2) %></span>
+            </div>
+        </div>
+
+        <div class="summary mt-4">
+            <div>
+                <h6>Total Discount</h6>
+                <span class="value discount">₹ <%= totalDiscount.toFixed(2) %></span>
+            </div>
+            <div>
+                <h6>delivery charges </h6>
+                <span class="value discount">₹ <%= totalOrder*40 %></span>
+            </div>
+            
+        </div>
+        <div class="summary mt-4">
+            <div>
+                <h6>Final Revenue</h6>
+                <span class="value">₹ <%= totalRevenue.toFixed(2) %></span>
+            </div>
+           
+    </div>
+    </section>
+</main>
+
+
+<script src="/admin/js/vendors/jquery-3.6.0.min.js"></script>
+<script src="/admin/js/vendors/bootstrap.bundle.min.js"></script>
+<script src="/admin/js/vendors/select2.min.js"></script>
+<script src="/admin/js/vendors/perfect-scrollbar.js"></script>
+<script src="/admin/js/vendors/jquery.fullscreen.min.js"></script>
+<script src="/admin/js/vendors/chart.js"></script>
+<script src="/admin/js/main.js" type="text/javascript"></script>
+<script src="/admin/js/custom-chart.js" type="text/javascript"></script>
+</body>
+
+</html>

@@ -1,0 +1,244 @@
+<link
+  href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  body {
+    padding: 10px 0;
+    background: #f6f9fc;
+    font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+    color: #333;
+  }
+
+  button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #88b04b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 200px;
+    text-align: center;
+  }
+
+  button:hover {
+    background-color: #7ca046;
+    transition: background-color 0.3s ease;
+  }
+
+  h1 {
+    color: #88b04b;
+    font-weight: 900;
+    font-size: 35px;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 300px; /* Two-column layout */
+    grid-gap: 20px;
+  }
+
+  /* Order Details */
+  .order-details {
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    background-color: white;
+    padding: 20px;
+  }
+
+  .order-details h6 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .order-details table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  .order-details th,
+  .order-details td {
+    padding: 10px;
+    border: 1px solid #ebebeb;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .order-details th {
+    background-color: #f8f9fa;
+    font-weight: 700;
+  }
+
+  .order-details td img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .order-details .total-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-size: 16px;
+    border-top: 1px solid #ebebeb;
+    margin-top: 10px;
+  }
+
+  .order-details .grand-total {
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .cancel-order {
+    color: red;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .cancel-order:hover {
+    text-decoration: underline;
+  }
+
+  /* Address Section */
+  .shipping-address {
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    background-color: white;
+    padding: 20px;
+  }
+
+  .shipping-address h6 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .shipping-address address {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .shipping-address address b {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 992px) {
+    .container {
+      grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    }
+  }
+</style>
+
+<body>
+  <% if(order.paymentStatus=='completed' ){ %>
+
+  <h1>Payment success</h1>
+  <% }else{ %>
+  <h1>Order Success</h1>
+
+  <% } %>
+  <div class="container">
+    <!-- Order Details (Left) -->
+    <div class="order-details">
+      <% if(order.paymentStatus=="completed" ){ %>
+      <div style="display: flex; align-items: flex-end">
+        <p>payment id :<%=order.paymentId %></p>
+
+        <button
+          type="submit"
+          class="button"
+          onclick="window.open('/downloadInvoice/<%=order._id %>','_self') "
+        >
+          Download invoice
+        </button>
+      </div>
+      <% }else if(order.paymentStatus=="failed" ){ %>
+      <p style="color: red">Payment failed</p>
+
+      <% } %>
+
+      <h6>Products</h6>
+      <table>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Size</th>
+            <th>Qty</th>
+            <th>MRP&nbsp;&nbsp;</th>
+            <th>Offer&nbsp;&nbsp;</th>
+            <th>Total&nbsp;&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% order.products.forEach(product => { %>
+          <tr>
+            <td>
+              <img
+                src="<%= product. productId.image[0] %>"
+                alt="Product Image"
+              />
+            </td>
+            <td><a><%= product.name %></a></td>
+            <td><%= product.size %></td>
+            <td><%= product.quantity %></td>
+            <td>₹ <%= product.mrp %></td>
+            <% if(product.offerPrice==null){ %>
+            <td>
+              <p>NO OFFER APPLIED</p>
+            </td>
+            <% }else{ %>
+            <td>₹ <%= product.offerPrice %></td>
+            <% } %>
+            <td>₹ <%= product.total %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <div class="total-container">
+        <% if(order.appliedCoupon!=null){ %>
+        <span class="grand-total"
+          >coupon applied: <%= order.appliedCoupon %></span
+        >
+        <span class="grand-total"
+          >coupon discount:₹ <%= order.couponDiscount %></span
+        >
+        <% } %>
+        <span class="grand-total"
+          >Delivery Charge:₹ <%= order.deliveryCharge %></span
+        >
+
+        <span class="grand-total">Grand Total:₹ <%= order.orderTotal %></span>
+      </div>
+    </div>
+
+    <!-- Shipping Address (Right) -->
+    <div class="shipping-address">
+      <h6>Shipping Address</h6>
+      <address>
+        <b>Address Type: <%= order.shippingAddress.addressType %></b>
+        <%= order.shippingAddress.houseName %>, <%= order.shippingAddress.street
+        %><br />
+        <%= order.shippingAddress.city %>, <%= order.shippingAddress.district
+        %>, <%= order.shippingAddress.state %><br />
+        Zip: <%= order.shippingAddress.zip %><br />
+        Phone: <%= order.shippingAddress.mobile %>
+      </address>
+    </div>
+    <button onclick="window.location.href='/shop'">continue shopping</button>
+  </div>
+</body>

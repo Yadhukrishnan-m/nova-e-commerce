@@ -1,0 +1,167 @@
+<%- include('./header.ejs') %>
+
+<main class="main">
+  <section
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0;
+    "
+  >
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 m-auto">
+          <div class="row">
+            <div class="col-lg-5">
+              <div
+                class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5"
+              >
+                <div class="padding_eight_all bg-white">
+                  <div class="heading_s1">
+                    <h3 class="mb-30">Login</h3>
+                  </div>
+                  <!-- for showing the messeges on ajax response-->
+                  <form
+                    method="post"
+                    id="loginForm"
+                    action="/login"
+                    onsubmit="return validateForm()"
+                  >
+                    <h6
+                      id="responseMessage"
+                      style="text-align: center; color: #e74c3c"
+                    ></h6>
+                    <% if (error) { %>
+                    <h6 style="text-align: center; color: #e74c3c">
+                      <%= error %>
+                    </h6>
+                    <% } %> <% if (success) { %>
+                    <h6 style="text-align: center; color: #2ecc71">
+                      <%= success %>
+                    </h6>
+                    <% } %>
+
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        id="email"
+                        name="email"
+                        placeholder="Your Email"
+                      />
+                      <p
+                        id="emailMessage"
+                        style="text-align: center; color: #e74c3c"
+                      ></p>
+                    </div>
+                    <div class="form-group" style="position: relative">
+                      <input
+                        required
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                      />
+                      <p
+                        id="passwordMessage"
+                        style="text-align: center; color: #e74c3c"
+                      ></p>
+                      <i
+                        class="far fa-eye fa-eye-slash"
+                        id="eyeIcon"
+                        style="
+                          position: absolute;
+                          top: 40%;
+                          right: 5px;
+                          transform: translateY(-50%);
+                          cursor: pointer;
+                        "
+                      ></i>
+                    </div>
+                    <div class="login_footer form-group">
+                      <div class="chek-form">
+                        <div class="custome-checkbox">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            name="checkbox"
+                            id="exampleCheckbox1"
+                            value=""
+                          />
+                        </div>
+                      </div>
+                      <a class="text-muted" href="/forgotPassword/email"
+                        >Forgot password?</a
+                      >
+                    </div>
+
+                    <div class="form-group">
+                      <button
+                        type="submit"
+                        class="btn btn-fill-out btn-block hover-up"
+                        name="login"
+                      >
+                        Log in
+                      </button>
+                    </div>
+                    <div>
+                      <ul
+                        class="btn-login list_none text-center mb-15"
+                        style="
+                          display: flex;
+                          justify-content: center;
+                          gap: 15px;
+                          padding: 0;
+                          list-style: none;
+                        "
+                      >
+                        <li style="margin: 0">
+                          <a
+                            href="/auth/facebook"
+                            class="btn btn-facebook hover-up"
+                            style="display: inline-block; width: auto"
+                            >Login With Facebook</a
+                          >
+                        </li>
+                        <li style="margin: 0">
+                          <a
+                            href="/auth/google"
+                            class="btn btn-google hover-up"
+                            style="display: inline-block; width: auto"
+                            >Login With Google</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="text-muted text-center">
+                      don't have an account? <a href="/register">Sign up now</a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="./user/js/login.js"></script>
+<script src="./user/js/loginAjax.js"></script>
+<!-- the script for the verify login in ajax -->
+
+<script>
+  const eyeIcon = document.getElementById("eyeIcon");
+  const password = document.getElementById("password");
+
+  eyeIcon.addEventListener("click", () => {
+    const type =
+      password.getAttribute("type") === "password" ? "text" : "password";
+    password.setAttribute("type", type);
+    eyeIcon.classList.toggle("fa-eye-slash");
+  });
+</script>
+
+<%- include('./footer.ejs') %>

@@ -1,0 +1,170 @@
+<%- include('./header.ejs') %>
+<%- include('./sidePannel.ejs') %>   
+<style>
+  .custom-button {
+    width: 100%;         /* Increase the button width */
+    padding: 8px 0;      /* Adjust the height by reducing padding */
+    font-size: 16px;     /* Optional: Adjust the font size for better readability */
+}
+
+</style>
+<main class="main-wrap">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var successMessage = '<%= successMsg %>';
+        var errorMessage = '<%= errorMsg %>';
+
+        if (successMessage) {
+            Swal.fire({
+                toast: true,
+                icon: 'success',
+                title: successMessage,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        }
+        if (errorMessage) {
+            Swal.fire({
+                toast: true,
+                icon: 'warning',
+                title: errorMessage,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        }
+
+        function confirmDelete(Id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/admin/categoryOffer/delete/' + Id;
+                }
+            });
+        }
+    </script>
+
+    <div class="col-lg-9">
+        <section class="content-body p-xl-4">
+            <form onsubmit="return validateForm()" action="/admin/categoryOffer/add" id="categoryOfferForm" method="post">
+                <!-- Offer Name, Discount, and Category Selection -->
+                <div class="row mb-2">
+                    <div class="col-md-4">
+                        <label class="form-label">Offer Name</label>
+                        <input type="text" class="form-control" placeholder="Enter offer name" name="name" id="name" required>
+                        <small id="nameError" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Discount (%)</label>
+                        <input type="number" class="form-control" placeholder="Discount %" name="discount" id="discount" min="1" max="99" required>
+                        <small id="discountError" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" name="category" id="category" required>
+                            <option value="">Select a category</option>
+                            <% categories.forEach(category => { %>
+                                <option value="<%= category._id %>"><%= category.name %></option>
+                            <% }); %>
+                        </select>
+                        <small id="categoryError" class="text-danger"></small>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="row mb-2 justify-content-center">
+                  <div class="col-md-3 text-center">
+                      <button class="btn btn-primary custom-button" type="submit">Add Offer</button>
+                  </div>
+              </div>
+              
+            </form>
+        </section> 
+    </div> 
+
+    <!-- Display Category Offers Table -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Offer Name</th>
+                            <th scope="col">Discount (%)</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% categoryOffers.forEach(offer => { %>
+                            <tr>
+                                <td><%= offer.name %></td>
+                                <td><%= offer.discount %>%</td>
+                                <td><%= offer.category.name %></td> <!-- Assuming category name is populated in offer object -->
+                                <td>
+                                    <button class="btn btn-md rounded font-sm" onclick="window.location.href='/admin/categoryOfferEdit/<%= offer.category._id %>'">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-md rounded font-sm" style="background-color: #e74c3c;" onclick="confirmDelete('<%= offer.category._id %>')">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> 
+</main>
+
+<script>
+    function validateForm() {
+        document.getElementById('nameError').innerText = '';
+        document.getElementById('discountError').innerText = '';
+        document.getElementById('categoryError').innerText = '';
+
+        const name = document.getElementById('name').value;
+        const discount = document.getElementById('discount').value;
+        const category = document.getElementById('category').value;
+
+        if (name.length < 3) {
+            document.getElementById('nameError').innerText = 'Offer name must contain at least 3 characters.';
+            return false;
+        }
+
+        if (discount < 0 || discount > 100) {
+            document.getElementById('discountError').innerText = 'Discount must be between 1 and 99.';
+            return false;
+        }
+
+        if (!category) {
+            document.getElementById('categoryError').innerText = 'Please select a category.';
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>

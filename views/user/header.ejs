@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NOVA</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/user/imgs/theme/icons/nova.png"
+    />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/user/css/main.css?v=3.4" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css"
+    />
+
+    <style>
+      .navbar-nav {
+        flex-direction: row;
+      }
+      .nav-item {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+      .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIj48cmVjdCB3aWR0aD0iMTIiIGhlaWdodD0iMiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxMiIgc3Ryb2tlLWhvcml6b250YWw9Im1lZGl1bS1sYW5lIiBzdHJva2UtY29sb3I9IiM3QjZCMzIiLz48cmVjdCB3aWR0aD0iMTIiIGhlaWdodD0iMiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxMiIgc3Ryb2tlLWhvcml6b250YWw9Im1lZGl1bS1sYW5lIiBzdHJva2UtY29sb3I9IiM3QjZCMzIiLz48L3N2Zz4=");
+      }
+      .navbar-nav .nav-item .nav-link {
+        display: flex;
+        align-items: center;
+      }
+      .navbar-nav .nav-item .nav-link i {
+        margin-right: 5px;
+      }
+      .mobile-header-wrapper-inner {
+        background-color: #f8f9fa;
+      }
+      .mobile-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+      }
+      .mobile-header-content-area {
+        padding: 15px;
+      }
+    </style>
+  </head>
+
+  <body style="overflow-x: hidden">
+    <!-- this div contains all the top nav -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/">
+        <img
+          src="/user/imgs/theme/icons/nova.png"
+          alt="logo"
+          style="max-height: 40px"
+        />
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/shop">Shop</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/wishlist">
+              <i class="fi-rs-heart"></i> Wishlist
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/cart">
+              <i class="fi-rs-shopping-cart"></i> Cart
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/login">
+              <i class="fi-rs-user"></i> Account
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Mobile Section -->
+    <div class="mobile-header-active mobile-header-wrapper-style d-lg-none">
+      <div class="mobile-header-wrapper-inner">
+        <div class="mobile-header-top">
+          <div class="mobile-header-logo">
+            <a href="/"
+              ><img
+                src="/user/imgs/theme/icons/nova.png"
+                alt="logo"
+                style="max-height: 40px"
+            /></a>
+          </div>
+          <button class="close-style search-close">
+            <i class="icon-top"></i>
+            <i class="icon-bottom"></i>
+          </button>
+        </div>
+        <div class="mobile-header-content-area">
+          <div class="mobile-search search-style-3 mb-3">
+            <form action="#">
+              <input type="text" placeholder="Search for items…" />
+              <button type="submit"><i class="fi-rs-search"></i></button>
+            </form>
+          </div>
+          <div class="mobile-menu-wrap">
+            <nav>
+              <ul class="mobile-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="page-about.html">Shop</a></li>
+              </ul>
+            </nav>
+          </div>
+          <div class="mobile-header-info-wrap">
+            <div class="single-mobile-header-info">
+              <a href="shop-wishlist.html">
+                <i class="fi-rs-heart"></i> Wishlist
+              </a>
+            </div>
+            <div class="single-mobile-header-info">
+              <a href="cart.html"> <i class="fi-rs-shopping-cart"></i> Cart </a>
+            </div>
+            <div class="single-mobile-header-info">
+              <a href="/login"> <i class="fi-rs-user"></i> Account </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

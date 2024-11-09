@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NOVA</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="" />
+    <meta property="og:type" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:image" content="" />
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="/user/imgs/theme/icons/nova.png"
+    />
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="/user/css/main.css?v=3.4" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <div class="detail-gallery">
+    <a href="/product/<%= product._id %>">
+      <button
+        type="submit"
+        style="
+          height: 30px;
+          padding: 5px 10px;
+          text-align: center;
+          display: inline-block;
+        "
+      >
+        back
+      </button>
+    </a>
+    <!-- MAIN SLIDES -->
+    <div class="product-image-slider" style="width: 300px; margin: 0 auto">
+      <!-- First large image -->
+      <figure
+        class="main-image"
+        id="imageZoom"
+        style="
+          width: 100%;
+          height: auto;
+          margin-bottom: 10px;
+          --url: url(<%= product.image[0] %>);
+        "
+      >
+        <img
+          src="<%= product.image[0] %>"
+          alt="product image"
+          id="mainImage"
+          style="width: 100%; height: auto; border-radius: 10px"
+        />
+      </figure>
+
+      <!-- Smaller images below -->
+      <div
+        class="thumbnail-images"
+        style="display: flex; justify-content: space-evenly"
+      >
+        <% product.image.slice(1).forEach((singleimage)=> { %>
+        <figure class="thumbnail" style="width: 30%; height: auto">
+          <img
+            src="<%= singleimage %>"
+            alt="product thumbnail"
+            data-src="<%= singleimage %>"
+            id="subImage"
+            style="width: 100%; height: auto; border-radius: 5px"
+          />
+        </figure>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- THUMBNAILS -->
+    <script>
+      const mainImage = document.getElementById("mainImage");
+      const subImage = document.querySelectorAll("img[data-src]");
+
+      subImage.forEach((element) => {
+        element.addEventListener("click", function () {
+          mainImage.src = this.getAttribute("data-src");
+        });
+      });
+    </script>
+  </div>
+  <!-- End Gallery -->
+</html>

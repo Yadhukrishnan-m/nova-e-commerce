@@ -1,0 +1,287 @@
+<%- include('./header.ejs') %>
+
+<main class="main">
+  <div class="page-header breadcrumb-wrap">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html" rel="nofollow">Home</a>
+
+        <span></span> Account
+      </div>
+    </div>
+  </div>
+  <section class="pt-15 pb-15">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 m-auto">
+          <div class="row">
+            <div class="col-md-8">
+              <div>
+                <div class="card">
+                  <div class="card-header">
+                    <h5>Edit Your Address Details</h5>
+                  </div>
+                  <div class="card-body">
+                    <form
+                      method="post"
+                      action="/editAddress/<%=address._id%>"
+                      onsubmit="return validateform()"
+                    >
+                      <div class="row">
+                        <!-- Street Address -->
+                        <div class="form-group col-md-12">
+                          <label>Street<span></span></label>
+                          <input
+                            class="form-control square"
+                            name="street"
+                            id="street"
+                            type="text"
+                            value="<%=address.street %>"
+                          />
+                          <p id="streetMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- House Name -->
+                        <div class="form-group col-md-12">
+                          <label>House Name or House Number<span></span></label>
+                          <input
+                            class="form-control square"
+                            name="houseName"
+                            id="houseName"
+                            type="text"
+                            value="<%=address.houseName %>"
+                          />
+                          <p id="houseNameMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- Landmark -->
+                        <div class="form-group col-md-12">
+                          <label>Landmark <span></span></label>
+                          <input
+                            class="form-control square"
+                            name="landmark"
+                            id="landmark"
+                            type="text"
+                            value="<%=address.landmark %>"
+                          />
+                          <p id="landmarkMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- City -->
+                        <div class="form-group col-md-6">
+                          <label>City <span></span></label>
+                          <input
+                            class="form-control square"
+                            name="city"
+                            id="city"
+                            type="text"
+                            value="<%=address.city %>"
+                          />
+                          <p id="cityMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- District -->
+                        <div class="form-group col-md-6">
+                          <label>District <span></span></label>
+                          <input
+                            class="form-control square"
+                            name="district"
+                            id="district"
+                            type="text"
+                            value="<%=address.district %>"
+                          />
+                          <p id="districtMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- State -->
+                        <div class="form-group col-md-6">
+                          <label>State <span></span></label>
+                          <input
+                            class="form-control square"
+                            name="state"
+                            id="state"
+                            type="text"
+                            value="<%=address.state %>"
+                          />
+                          <p id="stateMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- Zip Code -->
+                        <div class="form-group col-md-6">
+                          <label>Zip Code <span></span></label>
+                          <input
+                            class="form-control square"
+                            name="zip"
+                            id="zip"
+                            type="text"
+                            value="<%=address.zip %>"
+                          />
+                          <p id="zipMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- Country -->
+                        <div class="form-group col-md-6">
+                          <label>Address Type <span></span></label>
+                          <input
+                            class="form-control square"
+                            name="addressType"
+                            id="addressType"
+                            type="text"
+                            value="<%=address.addressType %>"
+                          />
+                          <p id="addressTypeMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- Mobile Number -->
+                        <div class="form-group col-md-6">
+                          <label>Mobile Number <span></span></label>
+                          <input
+                            class="form-control square"
+                            name="mobile"
+                            id="mobile"
+                            type="text"
+                            value="<%=address.mobile %>"
+                          />
+                          <p id="mobileMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- Alternative Mobile Number -->
+                        <div class="form-group col-md-6">
+                          <label>Alternative Mobile Number <span></span></label>
+                          <input
+                            class="form-control square"
+                            name="altMobile"
+                            id="altMobile"
+                            type="text"
+                            value="<%=address.altMobile %>"
+                          />
+                          <p id="altMobileMessage" style="color: red"></p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="col-md-12">
+                          <button
+                            type="submit"
+                            class="btn btn-fill-out submit"
+                            name="submit"
+                            value="Submit"
+                          >
+                            Save Address
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+  // function validateform() {
+  //     let valid = true;
+
+  //     const mobileRegex = /^[0-9]{10}$/;
+  //     const mobile = document.getElementById('mobile').value;
+  //     const altMobile = document.getElementById('altMobile').value;
+
+  //     // For mobile
+  //     if (!mobileRegex.test(mobile)) {
+  //         document.getElementById('mobileMessage').textContent = '*10 digits required';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('mobileMessage').textContent = '';
+  //     }
+
+  //     // For altMobile
+  //     if (!mobileRegex.test(altMobile)) {
+  //         document.getElementById('altMobileMessage').textContent = '*10 digits required';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('altMobileMessage').textContent = '';
+  //     }
+
+  //     // For character and space
+  //     const charAndSpecial = /^[a-zA-Z]*$/;
+
+  //     // For state
+  //     const state = document.getElementById('state').value;
+  //     if (!charAndSpecial.test(state)) {
+  //         document.getElementById('stateMessage').textContent = '*enter valid state';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('stateMessage').textContent = '';
+  //     }
+
+  //     // For city
+  //     const city = document.getElementById('city').value;
+  //     if (!charAndSpecial.test(city)) {
+  //         document.getElementById('cityMessage').textContent = '*enter valid city';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('cityMessage').textContent = '';
+  //     }
+
+  //     // For district
+  //     const district = document.getElementById('district').value;
+  //     if (!charAndSpecial.test(district)) {
+  //         document.getElementById('districtMessage').textContent = '*enter valid district';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('districtMessage').textContent = '';
+  //     }
+
+  //     // For address type
+  //     const addressType = document.getElementById('addressType').value;
+  //     if (!/^[A-Za-z0-9]{3}.*$/.test(addressType)) {
+  //         document.getElementById('addressTypeMessage').textContent = '*enter valid address type';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('addressTypeMessage').textContent = '';
+  //     }
+
+  //     // For zip code
+  //     const zip = document.getElementById('zip').value;
+  //     const zipRegex = /^[0-9]{6}$/; // Assuming a 6-digit zip code
+  //     if (!zipRegex.test(zip)) {
+  //         document.getElementById('zipMessage').textContent = '*enter valid 6 digit zip code';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('zipMessage').textContent = '';
+  //     }
+
+  //     // For street
+  //     const street = document.getElementById('street').value;
+  //     if (!/^[A-Za-z0-9]{3}.*$/.test(street)) {
+  //         document.getElementById('streetMessage').textContent = '*enter valid street address';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('streetMessage').textContent = '';
+  //     }
+
+  //     // For house name
+  //     const houseName = document.getElementById('houseName').value;
+  //     if (!/^[A-Za-z0-9]{3}.*$/.test(houseName)) {
+  //         document.getElementById('houseNameMessage').textContent = '*enter valid house name';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('houseNameMessage').textContent = '';
+  //     }
+
+  //     // For landmark
+  //     const landmark = document.getElementById('landmark').value;
+  //     if (!/^[A-Za-z0-9]{3}.*$/.test(landmark)) {
+  //         document.getElementById('landmarkMessage').textContent = '*enter valid landmark';
+  //         valid = false;
+  //     } else {
+  //         document.getElementById('landmarkMessage').textContent = '';
+  //     }
+
+  //     return valid;
+  // }
+</script>
+<%- include('./footer.ejs') %>
